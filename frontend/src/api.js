@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+const host = window.location.hostname;
+const port = import.meta.env.VITE_API_PORT || '5001';
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  baseURL: import.meta.env.VITE_API_URL || `http://${host}:${port}/api`,
 });
 
 api.interceptors.request.use((config) => {
