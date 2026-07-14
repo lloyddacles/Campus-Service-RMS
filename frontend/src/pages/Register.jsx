@@ -1,0 +1,44 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+export default function Register() {
+  const [form, setForm] = useState({ email: '', password: '', name: '', role: 'student' });
+  const [error, setError] = useState('');
+  const { register } = useAuth();
+  const navigate = useNavigate();
+
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await register(form.email, form.password, form.name, form.role);
+      navigate('/');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Registration failed');
+    }
+  };
+
+  return (
+    <div className="auth-page">
+      <form onSubmit={handleSubmit} className="auth-form">
+        <h1>Register</h1>
+        {error && <p className="error">{error}</p>}
+        <input name="name" placeholder="Full Name" value={form.name}
+          onChange={handleChange} required />
+        <input name="email" type="email" placeholder="Email" value={form.email}
+          onChange={handleChange} required />
+        <input name="password" type="password" placeholder="Password" value={form.password}
+          onChange={handleChange} required />
+        <select name="role" value={form.role} onChange={handleChange}>
+          <option value="student">Student</option>
+          <option value="staff">Staff</option>
+          <option value="admin">Admin</option>
+        </select>
+        <button type="submit">Register</button>
+        <p className="auth-link">Already have an account? <Link to="/login">Login</Link></p>
+      </form>
+    </div>
+  );
+}
