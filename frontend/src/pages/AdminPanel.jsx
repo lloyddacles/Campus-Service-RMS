@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react';
 import api from '../api';
-import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const statuses = ['submitted', 'in_progress', 'resolved', 'closed'];
 const priorityColors = { low: '#6b7280', medium: '#f59e0b', high: '#ef4444', critical: '#dc2626' };
 const statusColors = { submitted: '#3b82f6', in_progress: '#f59e0b', resolved: '#22c55e', closed: '#6b7280' };
 
 export default function AdminPanel() {
-  const { user } = useAuth();
+  const { addToast } = useToast();
   const [requests, setRequests] = useState([]);
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,15 +32,24 @@ export default function AdminPanel() {
 
   const updateStatus = async (id, status) => {
     await api.patch(`/requests/${id}/status`, { status });
+    addToast(`Request #${id} status updated`);
     fetchData();
   };
 
   const assignStaff = async (id, assigned_to) => {
     await api.patch(`/requests/${id}/assign`, { assigned_to });
+    addToast(`Request #${id} assigned`);
     fetchData();
   };
 
-  if (loading) return <p className="loading">Loading...</p>;
+  if (loading) return (
+    <div className="admin-panel">
+      <h1>Admin Panel</h1>
+      <div className="request-list">
+        {[1,2,3].map((i) => <div key={i} className="request-card"><div className="skeleton skeleton-card" /></div>)}
+      </div>
+    </div>
+  );
 
   return (
     <div className="admin-panel">
@@ -53,7 +62,8 @@ export default function AdminPanel() {
               <select
                 value={req.status}
                 onChange={(e) => updateStatus(req.id, e.target.value)}
-                style={{ background: statusColors[req.status], color: '#fff', border: 'none', padding: '4px 8px', borderRadius: '4px' }}
+                className="status-select"
+                style={{ background: statusColors[req.status], color: '#fff' }}
               >
                 {statuses.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
               </select>

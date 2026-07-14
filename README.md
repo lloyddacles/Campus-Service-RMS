@@ -17,15 +17,24 @@ Built with: **React** (frontend), **Express** (backend), **SQLite** (database)
 
 ### Phase 2 — Communication
 - **Request detail page** — Click any request to see full info, comments, and files
+- **Status timeline** — Visual progress bar showing where your request is at
 - **Comments** — Staff can add public replies or **internal notes** (hidden from students)
 - **File uploads** — Attach images, documents, or any file (max 10MB)
 - **Notifications** — Bell icon in the navbar. Get notified when status changes or someone comments
+
+### UI Enhancements
+- **Dark mode** — Toggle in the navbar, remembers your preference
+- **Toast notifications** — Smooth pop-up messages when you submit, comment, upload, or change status
+- **Skeleton loaders** — Animated placeholders while data loads (no more "Loading..." text)
+- **Smooth animations** — Cards fade and slide in, buttons respond on click
+- **Empty states** — Friendly messages with icons when there's nothing to show
+- **Mobile friendly** — Hamburger menu, responsive layout
+- **Live notification polling** — Bell icon checks for updates every 15 seconds
 
 ### Upcoming
 - Analytics dashboard with charts
 - Request templates and auto-routing
 - Approval workflows
-- Mobile-friendly design
 
 ---
 
@@ -76,7 +85,7 @@ Campus-Service-RMS/
 └── frontend/
     └── src/
         ├── components/    # Reusable UI pieces (Navbar, NotificationBell)
-        ├── context/       # Auth state management
+        ├── context/       # Auth state + Toast notifications
         ├── pages/         # Each page of the app
         └── api.js         # Connects frontend to backend
 ```

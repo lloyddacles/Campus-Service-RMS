@@ -4,6 +4,22 @@ import api from '../api';
 
 const priorityColors = { low: '#6b7280', medium: '#f59e0b', high: '#ef4444', critical: '#dc2626' };
 const statusColors = { submitted: '#3b82f6', in_progress: '#f59e0b', resolved: '#22c55e', closed: '#6b7280' };
+const categoryIcons = {
+  Facilities: '🏢', 'IT Support': '💻', Cleaning: '🧹',
+  Security: '🔒', Administrative: '📋', Academic: '📚', Other: '📌',
+};
+
+function SkeletonCards() {
+  return (
+    <div className="request-list">
+      {[1,2,3].map((i) => (
+        <div key={i} className="request-card">
+          <div className="skeleton skeleton-card" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -45,17 +61,27 @@ export default function Dashboard() {
           <option value="high">High</option>
           <option value="critical">Critical</option>
         </select>
-        <button onClick={fetchRequests} className="btn-secondary">Refresh</button>
+        <button onClick={fetchRequests} className="btn-secondary">⟳ Refresh</button>
       </div>
 
       {loading ? (
-        <p className="loading">Loading...</p>
+        <SkeletonCards />
       ) : requests.length === 0 ? (
-        <p className="empty">No requests found.</p>
+        <div className="empty">
+          <p style={{ fontSize: '2rem', marginBottom: 8 }}>📭</p>
+          <p>No requests found.</p>
+          <button onClick={() => navigate('/create')} className="btn-secondary" style={{ marginTop: 12 }}>
+            + Create one
+          </button>
+        </div>
       ) : (
         <div className="request-list">
           {requests.map((req) => (
-            <div key={req.id} className="request-card clickable" onClick={() => navigate(`/requests/${req.id}`)}>
+            <div
+              key={req.id}
+              className="request-card clickable"
+              onClick={() => navigate(`/requests/${req.id}`)}
+            >
               <div className="request-header">
                 <span className="request-id">#{req.id}</span>
                 <span className="badge" style={{ background: statusColors[req.status] }}>
@@ -68,10 +94,10 @@ export default function Dashboard() {
               <h3>{req.title}</h3>
               <p className="request-desc">{req.description}</p>
               <div className="request-meta">
-                <span>{req.category}</span>
-                {req.location && <span>{req.location}</span>}
-                <span>by {req.requester_name}</span>
-                {req.assigned_name && <span>Assigned: {req.assigned_name}</span>}
+                <span><span className="cat-icon">{categoryIcons[req.category] || '📌'}</span>{req.category}</span>
+                {req.location && <span>📍 {req.location}</span>}
+                <span>👤 {req.requester_name}</span>
+                {req.assigned_name && <span>✅ {req.assigned_name}</span>}
               </div>
               <div className="request-footer">
                 <span className="date">{new Date(req.created_at).toLocaleDateString()}</span>

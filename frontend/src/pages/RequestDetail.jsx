@@ -2,15 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 
 const priorityColors = { low: '#6b7280', medium: '#f59e0b', high: '#ef4444', critical: '#dc2626' };
 const statusColors = { submitted: '#3b82f6', in_progress: '#f59e0b', resolved: '#22c55e', closed: '#6b7280' };
 const statuses = ['submitted', 'in_progress', 'resolved', 'closed'];
+const statusLabels = { submitted: 'Submitted', in_progress: 'In Progress', resolved: 'Resolved', closed: 'Closed' };
+
+const timelineOrder = ['submitted', 'in_progress', 'resolved', 'closed'];
 
 export default function RequestDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { addToast } = useToast();
   const [request, setRequest] = useState(null);
   const [comments, setComments] = useState([]);
   const [attachments, setAttachments] = useState([]);
@@ -36,7 +41,7 @@ export default function RequestDetail() {
         setStaff(data);
       }
     } catch (err) {
-      console.error(err);
+      addToast('Could not load request', 'error');
       navigate('/');
     } finally {
       setLoading(false);
@@ -47,11 +52,13 @@ export default function RequestDetail() {
 
   const handleStatusChange = async (status) => {
     await api.patch(`/requests/${id}/status`, { status });
+    addToast(`Status changed to ${statusLabels[status]}`);
     fetchData();
   };
 
   const handleAssign = async (assigned_to) => {
     await api.patch(`/requests/${id}/assign`, { assigned_to });
+    addToast('Request assigned');
     fetchData();
   };
 
@@ -59,6 +66,7 @@ export default function RequestDetail() {
     e.preventDefault();
     if (!newComment.trim()) return;
     await api.post(`/comments/request/${id}`, { content: newComment, is_internal: isInternal });
+    addToast('Comment posted');
     setNewComment('');
     setIsInternal(false);
     fetchData();
@@ -71,6 +79,7 @@ export default function RequestDetail() {
     const form = new FormData();
     form.append('file', file);
     await api.post(`/attachments/request/${id}`, form);
+    addToast('File uploaded');
     fileRef.current.value = '';
     setUploading(false);
     fetchData();
@@ -86,12 +95,37 @@ export default function RequestDetail() {
     URL.revokeObjectURL(url);
   };
 
-  if (loading) return <p className="loading">Loading...</p>;
+  if (loading) {
+    return (
+      <div className="detail-page">
+        <div className="skeleton" style={{ width: 80, height: 36, marginBottom: 20 }} />
+        <div className="detail-card">
+          <div className="skeleton" style={{ width: '60%', height: 28, marginBottom: 16 }} />
+          <div className="skeleton" style={{ width: '100%', height: 16, marginBottom: 8 }} />
+          <div className="skeleton" style={{ width: '80%', height: 16 }} />
+        </div>
+      </div>
+    );
+  }
   if (!request) return null;
+
+  const currentIdx = timelineOrder.indexOf(request.status);
 
   return (
     <div className="detail-page">
-      <button onClick={() => navigate('/')} className="btn-secondary">&larr; Back</button>
+      <button onClick={() => navigate('/')} className="btn-secondary">&larr; Back to Dashboard</button>
+
+      {/* Status Timeline */}
+      <div className="detail-card" style={{ marginTop: 16 }}>
+        <div className="status-timeline">
+          {timelineOrder.map((s, i) => (
+            <div key={s} className={`timeline-step ${i < currentIdx ? 'done' : i === currentIdx ? 'active' : ''}`}>
+              <div className="dot">{i < currentIdx ? '✓' : i + 1}</div>
+              <div>{statusLabels[s]}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="detail-card">
         <div className="detail-header">
@@ -107,11 +141,11 @@ export default function RequestDetail() {
                 className="status-select"
                 style={{ background: statusColors[request.status], color: '#fff' }}
               >
-                {statuses.map((s) => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+                {statuses.map((s) => <option key={s} value={s}>{statusLabels[s]}</option>)}
               </select>
             ) : (
               <span className="badge" style={{ background: statusColors[request.status] }}>
-                {request.status.replace('_', ' ')}
+                {statusLabels[request.status]}
               </span>
             )}
             <span className="badge" style={{ background: priorityColors[request.priority] }}>
@@ -121,11 +155,11 @@ export default function RequestDetail() {
         </div>
 
         <div className="detail-meta">
-          <div><strong>Category:</strong> {request.category}</div>
-          {request.location && <div><strong>Location:</strong> {request.location}</div>}
-          <div><strong>Submitted by:</strong> {request.requester_name}</div>
-          <div><strong>Date:</strong> {new Date(request.created_at).toLocaleString()}</div>
-          {request.assigned_name && <div><strong>Assigned to:</strong> {request.assigned_name}</div>}
+          <div><strong>Category</strong><br/>{request.category}</div>
+          {request.location && <div><strong>Location</strong><br/>{request.location}</div>}
+          <div><strong>Submitted by</strong><br/>{request.requester_name}</div>
+          <div><strong>Date</strong><br/>{new Date(request.created_at).toLocaleDateString()}</div>
+          {request.assigned_name && <div><strong>Assigned to</strong><br/>{request.assigned_name}</div>}
         </div>
 
         <div className="detail-description">
@@ -135,7 +169,7 @@ export default function RequestDetail() {
 
         {user.role !== 'student' && (
           <div className="detail-assign">
-            <label>Assign to:</label>
+            <label><strong>Assign to:</strong></label>
             <select value={request.assigned_to || ''} onChange={(e) => handleAssign(e.target.value || null)}>
               <option value="">Unassigned</option>
               {staff.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
@@ -147,18 +181,22 @@ export default function RequestDetail() {
       {/* Attachments */}
       <div className="detail-section">
         <h2>Attachments</h2>
-        <div className="attachment-list">
-          {attachments.map((att) => (
-            <div key={att.id} className="attachment-item" onClick={() => handleDownload(att)}>
-              <span className="att-icon">&#128206;</span>
-              <span className="att-name">{att.original_name}</span>
-              <span className="att-size">{(att.size / 1024).toFixed(1)} KB</span>
-            </div>
-          ))}
-        </div>
+        {attachments.length > 0 ? (
+          <div className="attachment-list">
+            {attachments.map((att) => (
+              <div key={att.id} className="attachment-item" onClick={() => handleDownload(att)}>
+                <span className="att-icon">📎</span>
+                <span className="att-name">{att.original_name}</span>
+                <span className="att-size">{(att.size / 1024).toFixed(1)} KB</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="empty" style={{ padding: 20 }}>No attachments yet.</p>
+        )}
         <input type="file" ref={fileRef} onChange={handleFileUpload} hidden />
         <button onClick={() => fileRef.current.click()} className="btn-secondary" disabled={uploading}>
-          {uploading ? 'Uploading...' : 'Upload File'}
+          {uploading ? '⏳ Uploading...' : '📤 Upload File'}
         </button>
       </div>
 
@@ -170,29 +208,27 @@ export default function RequestDetail() {
             <div key={c.id} className={`comment ${c.is_internal ? 'internal' : ''}`}>
               <div className="comment-header">
                 <strong>{c.user_name}</strong>
-                <span className={c.is_internal ? 'badge-internal' : ''}>
-                  {c.is_internal ? 'Internal' : c.user_role}
-                </span>
+                {c.is_internal && <span className="badge-internal">Internal</span>}
                 <span className="date">{new Date(c.created_at).toLocaleString()}</span>
               </div>
               <p>{c.content}</p>
             </div>
           ))}
-          {comments.length === 0 && <p className="empty">No comments yet.</p>}
+          {comments.length === 0 && <p className="empty" style={{ padding: 20 }}>No comments yet. Start the conversation!</p>}
         </div>
 
         <form onSubmit={handleComment} className="comment-form">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Add a comment..."
+            placeholder="Write a comment..."
             rows={3}
           />
           <div className="comment-actions">
             {user.role !== 'student' && (
               <label className="internal-toggle">
                 <input type="checkbox" checked={isInternal} onChange={(e) => setIsInternal(e.target.checked)} />
-                Internal note (staff only)
+                Internal note
               </label>
             )}
             <button type="submit">Post Comment</button>
