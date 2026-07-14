@@ -772,55 +772,122 @@ input, select, textarea, button { max-width: 100%; }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .container { padding: 16px 12px; }
-  .navbar { padding: 0 12px; }
+  body { overflow-x: hidden; }
+
+  .container { padding: 14px 10px; }
+  .navbar { padding: 0 10px; }
   .nav-links a { font-size: 0.82rem; padding: 8px 10px; }
+  .nav-brand { font-size: 1rem; }
+  .nav-user { font-size: 0.7rem; padding: 2px 8px; }
 
-  .detail-header { flex-direction: column; }
-  .detail-header h1 { font-size: 1.15rem; word-break: break-word; }
-  .detail-badges { flex-wrap: wrap; }
-  .detail-meta { grid-template-columns: 1fr; font-size: 0.82rem; }
-  .detail-card { padding: 16px; }
-  .detail-section { padding: 16px; }
+  /* Auth pages */
+  .auth-page { padding-top: 40px; }
+  .auth-form { margin: 0 8px; padding: 20px 16px; }
+  .auth-form h1 { font-size: 1.2rem; }
+  .auth-form input, .auth-form select { font-size: 0.85rem; padding: 10px; }
 
-  .filters { flex-direction: column; }
-  .filters select { flex: 1; min-width: 0; width: 100%; }
+  /* Dashboard */
+  .dashboard h1, .create-page h1, .admin-panel h1,
+  .analytics-page h1, .templates-page h1, .approvals-page h1 { font-size: 1.25rem; margin-bottom: 16px; }
+  .request-card { padding: 12px; }
+  .request-card h3 { font-size: 0.88rem; word-break: break-word; }
+  .request-desc { -webkit-line-clamp: 3; font-size: 0.8rem; }
+  .request-meta { font-size: 0.7rem; gap: 6px; }
+  .badge { font-size: 0.62rem; padding: 2px 7px; }
+
+  /* Filters */
+  .filters { flex-direction: column; gap: 8px; }
+  .filters select { width: 100%; font-size: 0.82rem; padding: 8px 10px; }
   .search-form { max-width: 100%; }
+  .search-input { font-size: 0.82rem; padding: 8px 10px; }
 
-  .request-card { padding: 14px; }
-  .request-card h3 { font-size: 0.92rem; word-break: break-word; }
-  .request-desc { -webkit-line-clamp: 3; }
-  .request-meta { font-size: 0.72rem; gap: 8px; }
+  /* Create request */
+  .create-form { padding: 16px; max-width: 100%; }
+  .create-form input, .create-form select, .create-form textarea { font-size: 0.85rem; padding: 9px 10px; }
 
-  .detail-meta div { padding: 6px 10px; }
-  .detail-description p { font-size: 0.85rem; word-break: break-word; }
+  /* Detail page */
+  .detail-card { padding: 14px; }
+  .detail-section { padding: 14px 16px; }
+  .detail-header { flex-direction: column; }
+  .detail-header h1 { font-size: 1.1rem; word-break: break-word; }
+  .detail-badges { flex-wrap: wrap; }
+  .detail-meta { grid-template-columns: 1fr; font-size: 0.8rem; }
+  .detail-meta div { padding: 6px 10px; font-size: 0.78rem; }
+  .detail-description p { font-size: 0.82rem; word-break: break-word; }
+  .detail-assign { flex-wrap: wrap; }
+  .detail-assign select { font-size: 0.8rem; flex: 1; min-width: 0; }
 
-  .status-timeline { overflow-x: auto; gap: 4px; padding: 12px 0; }
-  .timeline-step { flex: none; min-width: 70px; font-size: 0.65rem; }
-  .timeline-step .dot { width: 22px; height: 22px; font-size: 0.6rem; }
-  .timeline-step::after { top: 11px; }
+  /* Status timeline */
+  .status-timeline { overflow-x: auto; gap: 2px; padding: 10px 0; }
+  .timeline-step { flex: none; min-width: 64px; font-size: 0.6rem; }
+  .timeline-step .dot { width: 20px; height: 20px; font-size: 0.55rem; border-width: 2px; }
+  .timeline-step::after { top: 10px; }
 
+  /* Comments */
   .comment-header { flex-wrap: wrap; gap: 4px; }
-  .comment-header .date { margin-left: 0; width: 100%; font-size: 0.72rem; }
-  .comment { padding: 10px 12px; }
-  .comment p { font-size: 0.82rem; word-break: break-word; }
+  .comment-header .date { margin-left: 0; width: 100%; font-size: 0.7rem; }
+  .comment { padding: 10px; }
+  .comment p { font-size: 0.8rem; word-break: break-word; }
   .comment-actions { flex-direction: column; align-items: stretch; }
-  .internal-toggle { justify-content: center; }
+  .comment-actions button { width: 100%; }
+  .internal-toggle { justify-content: center; font-size: 0.78rem; }
+  .comment-form textarea { font-size: 0.82rem; }
 
-  .attachment-item { font-size: 0.78rem; padding: 8px 10px; }
+  /* Attachments */
+  .attachment-item { font-size: 0.76rem; padding: 8px 10px; }
 
-  .chart-label { width: 70px; font-size: 0.72rem; }
-  .chart-bar-row { gap: 6px; }
-  .weekly-label { font-size: 0.5rem; }
-  .stat-num { font-size: 1.6rem; }
-  .stat-card { padding: 16px; }
+  /* Analytics */
+  .chart-label { width: 60px; font-size: 0.68rem; }
+  .chart-bar-row { gap: 4px; }
+  .chart-bar-track { height: 18px; }
+  .chart-value { font-size: 0.75rem; width: 24px; }
+  .weekly-chart { height: 120px; }
+  .weekly-label { font-size: 0.45rem; }
+  .stat-num { font-size: 1.4rem; }
+  .stat-card { padding: 14px 10px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .chart-card { padding: 14px; }
+  .chart-row { grid-template-columns: 1fr; gap: 12px; }
 
-  .pagination { flex-wrap: wrap; gap: 8px; font-size: 0.82rem; }
-  .page-info { font-size: 0.75rem; }
-
-  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  /* Templates */
+  .page-header { flex-direction: column; align-items: stretch; gap: 10px; }
+  .page-header h1 { margin-bottom: 0; }
+  .page-header .btn-secondary { width: 100%; text-align: center; }
   .template-list { grid-template-columns: 1fr; }
+  .template-card { padding: 12px; }
+  .template-header strong { font-size: 0.88rem; word-break: break-word; }
+  .template-desc { font-size: 0.78rem; }
+  .template-meta { font-size: 0.72rem; gap: 8px; flex-wrap: wrap; }
 
-  .auth-form { margin: 0 12px; padding: 24px; }
-  .auth-form h1 { font-size: 1.3rem; }
+  /* Approvals */
+  .approval-actions { flex-direction: column; gap: 8px; }
+  .approval-actions button { width: 100%; text-align: center; }
+  .btn-approve, .btn-reject { padding: 10px; font-size: 0.82rem; }
+
+  /* Pagination */
+  .pagination { flex-wrap: wrap; gap: 6px; font-size: 0.78rem; padding: 12px 0; }
+  .page-info { font-size: 0.72rem; width: 100%; text-align: center; }
+
+  /* Notifications */
+  .notif-dropdown { width: 290px; right: -60px; }
+
+  /* Admin */
+  .admin-actions { flex-wrap: wrap; }
+  .admin-actions select { flex: 1; min-width: 0; }
+}
+
+@media (max-width: 420px) {
+  .container { padding: 10px 6px; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .detail-meta { font-size: 0.75rem; }
+  .detail-meta div { padding: 4px 8px; }
+  .auth-page { padding-top: 24px; }
+  .auth-form { padding: 16px 12px; }
+  .request-card { padding: 10px; }
+  .badge { font-size: 0.58rem; padding: 1px 5px; }
+  .nav-links a { font-size: 0.78rem; padding: 6px 8px; }
+  .notif-dropdown { width: 260px; right: -80px; }
+  .timeline-step { min-width: 56px; font-size: 0.55rem; }
+  .chart-label { width: 50px; font-size: 0.62rem; }
+  .page-header .btn-secondary { font-size: 0.78rem; padding: 8px; }
 }

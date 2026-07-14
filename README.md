@@ -41,7 +41,8 @@ Built with: **React** (frontend), **Express** (backend), **SQLite** (database)
 ### Phase 4 — Scale & Polish
 - **Pagination** — Request lists are paginated (20 per page). Navigate with Prev/Next buttons
 - **Search** — Search requests by title, description, or ID number. Works with filters
-- **Mobile responsive** — All pages work well on small screens (stacked layouts, readable text)
+- **Mobile responsive** — Fully responsive design with two breakpoints (768px tablet, 420px phone). All pages work on mobile including auth, dashboard, detail, analytics, templates, and approvals
+- **Dynamic API URL** — Automatically detects the correct server IP so mobile devices and the Xcode Simulator can connect
 - **Pending Approval** — Added to status filters and badge colors
 - **Admin page renamed** to "Manage" for clarity
 - **Analytics dashboard** — Stats overview (total, resolved, avg time), bar charts by status/priority/category, and a 30-day activity chart. Only staff/admin can view
