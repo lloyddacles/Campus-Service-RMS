@@ -1,11 +1,18 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import requestRoutes from './routes/requests.js';
 import userRoutes from './routes/users.js';
+import commentRoutes from './routes/comments.js';
+import attachmentRoutes from './routes/attachments.js';
+import notificationRoutes from './routes/notifications.js';
 
 dotenv.config();
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 app.use(cors());
@@ -23,6 +30,9 @@ app.get('/favicon.svg', (_req, res) => res.status(204).end());
 app.use('/api/auth', authRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/comments', commentRoutes);
+app.use('/api/attachments', attachmentRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok' });

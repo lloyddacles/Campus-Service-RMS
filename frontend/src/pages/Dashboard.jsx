@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
 const priorityColors = { low: '#6b7280', medium: '#f59e0b', high: '#ef4444', critical: '#dc2626' };
 const statusColors = { submitted: '#3b82f6', in_progress: '#f59e0b', resolved: '#22c55e', closed: '#6b7280' };
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const [requests, setRequests] = useState([]);
   const [filters, setFilters] = useState({ status: '', priority: '', category: '' });
   const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ export default function Dashboard() {
       ) : (
         <div className="request-list">
           {requests.map((req) => (
-            <div key={req.id} className="request-card">
+            <div key={req.id} className="request-card clickable" onClick={() => navigate(`/requests/${req.id}`)}>
               <div className="request-header">
                 <span className="request-id">#{req.id}</span>
                 <span className="badge" style={{ background: statusColors[req.status] }}>

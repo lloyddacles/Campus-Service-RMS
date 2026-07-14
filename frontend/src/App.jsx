@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import CreateRequest from './pages/CreateRequest';
+import RequestDetail from './pages/RequestDetail';
 import AdminPanel from './pages/AdminPanel';
 
 export default function App() {
@@ -22,6 +23,9 @@ export default function App() {
             } />
             <Route path="/create" element={
               <ProtectedRoute><CreateRequest /></ProtectedRoute>
+            } />
+            <Route path="/requests/:id" element={
+              <ProtectedRoute><RequestDetail /></ProtectedRoute>
             } />
             <Route path="/admin" element={
               <ProtectedRoute roles={['staff', 'admin']}><AdminPanel /></ProtectedRoute>

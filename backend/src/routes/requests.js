@@ -112,6 +112,10 @@ router.patch('/:id/status', authenticate, (req, res) => {
     if (result.changes === 0) return res.status(404).json({ error: 'Not found' });
 
     const row = db.prepare('SELECT * FROM service_requests WHERE id = ?').get(req.params.id);
+    db.prepare(
+      `INSERT INTO notifications (user_id, request_id, type, message)
+       VALUES (?, ?, 'status', ?)`
+    ).run(row.user_id, row.id, `Request status changed to ${status.replace('_', ' ')}`);
     res.json(row);
   } catch (err) {
     console.error(err);
@@ -134,6 +138,12 @@ router.patch('/:id/assign', authenticate, (req, res) => {
     if (result.changes === 0) return res.status(404).json({ error: 'Not found' });
 
     const row = db.prepare('SELECT * FROM service_requests WHERE id = ?').get(req.params.id);
+    if (assigned_to) {
+      db.prepare(
+        `INSERT INTO notifications (user_id, request_id, type, message)
+         VALUES (?, ?, 'assign', ?)`
+      ).run(assigned_to, row.id, `Request assigned to you`);
+    }
     res.json(row);
   } catch (err) {
     console.error(err);
