@@ -38,6 +38,18 @@ Built with: **React** (frontend), **Express** (backend), **SQLite** (database)
 - **Approval workflow** — Critical requests from students go to a "pending approval" state. Staff/admin can approve or reject them
 - **New admin nav links** — Analytics, Templates, and Approvals pages in the navbar for staff/admin
 
+### Phase 4 — Scale & Polish
+- **Pagination** — Request lists are paginated (20 per page). Navigate with Prev/Next buttons
+- **Search** — Search requests by title, description, or ID number. Works with filters
+- **Mobile responsive** — All pages work well on small screens (stacked layouts, readable text)
+- **Pending Approval** — Added to status filters and badge colors
+- **Admin page renamed** to "Manage" for clarity
+- **Analytics dashboard** — Stats overview (total, resolved, avg time), bar charts by status/priority/category, and a 30-day activity chart. Only staff/admin can view
+- **Request templates** — Admins can create reusable templates. Staff can browse them when creating requests
+- **Auto-routing** — Set rules to auto-assign requests based on category (e.g., all IT issues go to the IT staff member)
+- **Approval workflow** — Critical requests from students go to a "pending approval" state. Staff/admin can approve or reject them
+- **New admin nav links** — Analytics, Templates, and Approvals pages in the navbar for staff/admin
+
 ---
 
 ## How to Run

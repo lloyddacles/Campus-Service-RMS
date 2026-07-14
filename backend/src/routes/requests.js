@@ -4,17 +4,10 @@ import { authenticate } from '../middleware/auth.js';
 
 const router = Router();
 
-// Get all requests (with filters)
+// Get all requests (with filters, search, pagination)
 router.get('/', authenticate, (req, res) => {
-  const { status, priority, category } = req.query;
+  const { status, priority, category, search, page, limit } = req.query;
   try {
-    let sql = `
-      SELECT sr.*, u.name AS requester_name,
-        a.name AS assigned_name
-      FROM service_requests sr
-      JOIN users u ON sr.user_id = u.id
-      LEFT JOIN users a ON sr.assigned_to = a.id
-    `;
     const params = [];
     const conditions = [];
 
@@ -35,14 +28,32 @@ router.get('/', authenticate, (req, res) => {
       conditions.push('sr.category = ?');
       params.push(category);
     }
-
-    if (conditions.length) {
-      sql += ' WHERE ' + conditions.join(' AND ');
+    if (search) {
+      conditions.push('(sr.title LIKE ? OR sr.description LIKE ? OR sr.id = ?)');
+      const q = `%${search}%`;
+      params.push(q, q, parseInt(search) || 0);
     }
-    sql += ' ORDER BY sr.created_at DESC';
 
-    const rows = db.prepare(sql).all(...params);
-    res.json(rows);
+    const where = conditions.length ? ' WHERE ' + conditions.join(' AND ') : '';
+
+    const countRow = db.prepare(`SELECT COUNT(*) AS c FROM service_requests sr${where}`).get(...params);
+    const total = countRow.c;
+    const pageNum = Math.max(1, parseInt(page) || 1);
+    const pageSize = Math.min(50, Math.max(1, parseInt(limit) || 20));
+    const totalPages = Math.ceil(total / pageSize);
+
+    const rows = db.prepare(`
+      SELECT sr.*, u.name AS requester_name,
+        a.name AS assigned_name
+      FROM service_requests sr
+      JOIN users u ON sr.user_id = u.id
+      LEFT JOIN users a ON sr.assigned_to = a.id
+      ${where}
+      ORDER BY sr.created_at DESC
+      LIMIT ? OFFSET ?
+    `).all(...params, pageSize, (pageNum - 1) * pageSize);
+
+    res.json({ requests: rows, pagination: { page: pageNum, limit: pageSize, total, totalPages } });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
