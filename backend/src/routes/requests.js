@@ -80,12 +80,36 @@ router.post('/', authenticate, (req, res) => {
     return res.status(400).json({ error: 'Category, title, and description are required' });
   }
   try {
-    const result = db.prepare(
-      `INSERT INTO service_requests (user_id, category, title, description, priority, location)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).run(req.user.id, category, title, description, priority || 'medium', location);
+    let status = 'submitted';
+    if (priority === 'critical' && req.user.role === 'student') {
+      status = 'pending_approval';
+    }
 
-    const row = db.prepare('SELECT * FROM service_requests WHERE id = ?').get(result.lastInsertRowid);
+    const result = db.prepare(
+      `INSERT INTO service_requests (user_id, category, title, description, priority, location, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).run(req.user.id, category, title, description, priority || 'medium', location, status);
+
+    const rowId = result.lastInsertRowid;
+
+    // Auto-assign based on routing rules
+    const rule = db.prepare('SELECT assigned_to FROM routing_rules WHERE category = ?').get(category);
+    if (rule) {
+      db.prepare('UPDATE service_requests SET assigned_to = ? WHERE id = ?').run(rule.assigned_to, rowId);
+    }
+
+    // Create approval record if pending
+    if (status === 'pending_approval') {
+      db.prepare(
+        `INSERT INTO approvals (request_id, status) VALUES (?, 'pending')`
+      ).run(rowId);
+    }
+
+    const row = db.prepare(
+      `SELECT sr.*, u.name AS requester_name
+       FROM service_requests sr JOIN users u ON sr.user_id = u.id
+       WHERE sr.id = ?`
+    ).get(rowId);
     res.status(201).json(row);
   } catch (err) {
     console.error(err);
@@ -99,7 +123,7 @@ router.patch('/:id/status', authenticate, (req, res) => {
     return res.status(403).json({ error: 'Forbidden' });
   }
   const { status } = req.body;
-  const valid = ['submitted', 'in_progress', 'resolved', 'closed'];
+  const valid = ['submitted', 'in_progress', 'resolved', 'closed', 'pending_approval'];
   if (!valid.includes(status)) {
     return res.status(400).json({ error: `Status must be one of: ${valid.join(', ')}` });
   }

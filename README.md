@@ -31,10 +31,12 @@ Built with: **React** (frontend), **Express** (backend), **SQLite** (database)
 - **Mobile friendly** — Hamburger menu, responsive layout
 - **Live notification polling** — Bell icon checks for updates every 15 seconds
 
-### Upcoming
-- Analytics dashboard with charts
-- Request templates and auto-routing
-- Approval workflows
+### Phase 3 — Analytics & Admin Power
+- **Analytics dashboard** — Stats overview (total, resolved, avg time), bar charts by status/priority/category, and a 30-day activity chart. Only staff/admin can view
+- **Request templates** — Admins can create reusable templates. Staff can browse them when creating requests
+- **Auto-routing** — Set rules to auto-assign requests based on category (e.g., all IT issues go to the IT staff member)
+- **Approval workflow** — Critical requests from students go to a "pending approval" state. Staff/admin can approve or reject them
+- **New admin nav links** — Analytics, Templates, and Approvals pages in the navbar for staff/admin
 
 ---
 
@@ -113,6 +115,16 @@ Campus-Service-RMS/
 | GET | /api/notifications/unread-count | Unread count |
 | PATCH | /api/notifications/:id/read | Mark one as read |
 | PATCH | /api/notifications/read-all | Mark all as read |
+| GET | /api/analytics | Get stats (staff/admin) |
+| GET | /api/templates | List templates (staff/admin) |
+| GET | /api/templates/public | List templates (all users) |
+| POST | /api/templates | Create template (admin) |
+| DELETE | /api/templates/:id | Delete template (admin) |
+| GET | /api/routing | List routing rules (staff/admin) |
+| POST | /api/routing | Create rule (admin) |
+| DELETE | /api/routing/:category | Delete rule (admin) |
+| GET | /api/approvals/pending | List pending approvals |
+| PATCH | /api/approvals/:id/review | Approve or reject |
 
 ---
 

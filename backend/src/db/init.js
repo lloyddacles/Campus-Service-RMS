@@ -21,8 +21,7 @@ db.exec(`
     priority TEXT NOT NULL DEFAULT 'medium'
       CHECK (priority IN ('low', 'medium', 'high', 'critical')),
     location TEXT,
-    status TEXT NOT NULL DEFAULT 'submitted'
-      CHECK (status IN ('submitted', 'in_progress', 'resolved', 'closed')),
+    status TEXT NOT NULL DEFAULT 'submitted',
     assigned_to INTEGER REFERENCES users(id),
     created_at TEXT NOT NULL DEFAULT (datetime('now')),
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -56,6 +55,35 @@ db.exec(`
     message TEXT NOT NULL,
     is_read INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS templates (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    priority TEXT NOT NULL DEFAULT 'medium',
+    auto_assign_to INTEGER REFERENCES users(id),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS routing_rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category TEXT NOT NULL UNIQUE,
+    assigned_to INTEGER NOT NULL REFERENCES users(id),
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
+
+  CREATE TABLE IF NOT EXISTS approvals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    request_id INTEGER NOT NULL REFERENCES service_requests(id) ON DELETE CASCADE,
+    reviewed_by INTEGER REFERENCES users(id),
+    status TEXT NOT NULL DEFAULT 'pending'
+      CHECK (status IN ('pending', 'approved', 'rejected')),
+    notes TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+    reviewed_at TEXT
   );
 `);
 

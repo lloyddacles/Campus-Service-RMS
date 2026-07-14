@@ -35,7 +35,12 @@ export default function Navbar() {
         <Link to="/" className={isActive('/')} onClick={() => setMenuOpen(false)}>Dashboard</Link>
         <Link to="/create" className={isActive('/create')} onClick={() => setMenuOpen(false)}>New Request</Link>
         {user.role !== 'student' && (
-          <Link to="/admin" className={isActive('/admin')} onClick={() => setMenuOpen(false)}>Admin</Link>
+          <>
+            <Link to="/admin" className={isActive('/admin')} onClick={() => setMenuOpen(false)}>Manage</Link>
+            <Link to="/analytics" className={isActive('/analytics')} onClick={() => setMenuOpen(false)}>Analytics</Link>
+            <Link to="/templates" className={isActive('/templates')} onClick={() => setMenuOpen(false)}>Templates</Link>
+            <Link to="/approvals" className={isActive('/approvals')} onClick={() => setMenuOpen(false)}>Approvals</Link>
+          </>
         )}
         <NotificationBell />
         <button className="theme-toggle" onClick={toggleTheme} title="Toggle theme">

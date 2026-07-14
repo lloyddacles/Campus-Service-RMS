@@ -9,6 +9,9 @@ import Dashboard from './pages/Dashboard';
 import CreateRequest from './pages/CreateRequest';
 import RequestDetail from './pages/RequestDetail';
 import AdminPanel from './pages/AdminPanel';
+import Analytics from './pages/Analytics';
+import Templates from './pages/Templates';
+import PendingApprovals from './pages/PendingApprovals';
 
 export default function App() {
   return (
@@ -29,10 +32,19 @@ export default function App() {
               <Route path="/requests/:id" element={
                 <ProtectedRoute><RequestDetail /></ProtectedRoute>
               } />
-              <Route path="/admin" element={
-                <ProtectedRoute roles={['staff', 'admin']}><AdminPanel /></ProtectedRoute>
-              } />
-              <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="/admin" element={
+              <ProtectedRoute roles={['staff', 'admin']}><AdminPanel /></ProtectedRoute>
+            } />
+            <Route path="/analytics" element={
+              <ProtectedRoute roles={['staff', 'admin']}><Analytics /></ProtectedRoute>
+            } />
+            <Route path="/templates" element={
+              <ProtectedRoute roles={['staff', 'admin']}><Templates /></ProtectedRoute>
+            } />
+            <Route path="/approvals" element={
+              <ProtectedRoute roles={['staff', 'admin']}><PendingApprovals /></ProtectedRoute>
+            } />
+            <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </div>
         </ToastProvider>
