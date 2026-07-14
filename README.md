@@ -6,6 +6,10 @@ Built with: **React** (frontend), **Express** (backend), **SQLite** (database)
 
 ---
 
+**Created by Mr. Lloyd Christopher F. Dacles, MIS, CITSMP, DBMP, CPAA, ITPO, CDSA**
+
+---
+
 ## Features
 
 ### Phase 1 — Core
